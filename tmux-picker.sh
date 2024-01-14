@@ -16,13 +16,13 @@ function init_picker_pane() {
         local current_window_width=$(echo "$current_window_size" | cut -f1 -d:)
         local current_window_height=$(echo "$current_window_size" | cut -f2 -d:)
 
-            # this is needed to handle wrapped lines inside split windows:
-            tmux split-window -d -t "$picker_pane_id" -h -l "$((current_window_width - current_width - 1))" '/bin/sh'
-            tmux split-window -d -t "$picker_pane_id" -l "$((current_window_height - current_height - 1))" '/bin/sh'
-        fi
+        # this is needed to handle wrapped lines inside split windows:
+        tmux split-window -d -t "$picker_pane_id" -h -l "$((current_window_width - current_width - 1))" '/bin/sh'
+        tmux split-window -d -t "$picker_pane_id" -l "$((current_window_height - current_height - 1))" '/bin/sh'
+    fi
 
-        echo "$picker_pane_id:$picker_window_id"
-    }
+    echo "$picker_pane_id:$picker_window_id"
+}
 
 function capture_pane() {
     local pane_id=$1
