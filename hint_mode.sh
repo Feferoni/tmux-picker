@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 current_pane_id=$1
 picker_pane_id=$2
@@ -19,17 +19,17 @@ function lookup_match() {
     local input=$1
 
     input="$(echo "$input" | tr "A-Z" "a-z")"
-    grep -i "^$input:" $match_lookup_table | sed "s/^$input://" | head -n 1
+    grep -i "^$input:" "$match_lookup_table" | sed "s/^$input://" | head -n 1
 }
 
 function get_pane_contents() {
-    cat $pane_input_temp
+    cat "$pane_input_temp"
 }
 
 function extract_hints() {
     clear
-    export NUM_HINTS_NEEDED=$(get_pane_contents | gawk -f $CURRENT_DIR/counter.awk)
-    get_pane_contents | gawk -f $CURRENT_DIR/hinter.awk 3> $match_lookup_table
+    export NUM_HINTS_NEEDED=$(get_pane_contents | gawk -f "$CURRENT_DIR"/counter.awk)
+    get_pane_contents | gawk -f "$CURRENT_DIR"/hinter.awk 3> "$match_lookup_table"
 }
 
 function show_hints_again() {
@@ -47,7 +47,6 @@ function show_hints_and_swap() {
     extract_hints
     tmux swap-pane -s "$current_pane_id" -t "$picker_pane_id"
 }
-
 
 BACKSPACE=$'\177'
 
@@ -90,7 +89,6 @@ function handle_exit() {
     tmux kill-window -t "$picker_window_id"
 }
 
-
 function is_valid_input() {
     local input=$1
     local is_valid=1
@@ -98,7 +96,7 @@ function is_valid_input() {
     if [[ $input == "" ]] || [[ $input == "<ESC>" ]]; then
         is_valid=1
     else
-        for (( i=0; i<${#input}; i++ )); do
+        for ((i = 0; i < ${#input}; i++)); do
             char=${input:$i:1}
 
             if [[ ! "$char" =~ ^[a-zA-Z]$ ]]; then
@@ -131,7 +129,10 @@ function run_picker_copy_command() {
     local result="$1"
     local hint="$2"
 
-    is_uppercase=$(echo "$input" | grep -E '^[a-z]+$' &> /dev/null; echo $?)
+    is_uppercase=$(
+        echo "$input" | grep -E '^[a-z]+$' &> /dev/null
+        echo $?
+    )
 
     if [[ $is_uppercase == "1" ]] && [ ! -z "$PICKER_COPY_COMMAND_UPPERCASE" ]; then
         command_to_run="$PICKER_COPY_COMMAND_UPPERCASE"
@@ -140,7 +141,7 @@ function run_picker_copy_command() {
     fi
 
     if [[ ! -z "$command_to_run" ]]; then
-        tmux run-shell -b "printf '$result' | $command_to_run"
+        tmux run-shell -b "printf '%s' '$result' | $command_to_run"
     fi
 }
 
@@ -172,12 +173,12 @@ while read -rsn1 char; do
         input=""
         continue
     elif [[ $char == "<ESC>" ]]; then
-            exit
+        exit
     elif [[ $char == "" ]]; then
         if [ "$PICKER_PATTERNS" = "$PICKER_PATTERNS1" ]; then
-                export PICKER_PATTERNS=$PICKER_PATTERNS2;
+            export PICKER_PATTERNS=$PICKER_PATTERNS2
         else
-                export PICKER_PATTERNS=$PICKER_PATTERNS1;
+            export PICKER_PATTERNS=$PICKER_PATTERNS1
         fi
         show_hints_again "$picker_pane_id"
         continue

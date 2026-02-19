@@ -80,7 +80,7 @@ set_tmux_env PICKER_PATTERNS1 $(array_join "|" "${PATTERNS_LIST1[@]}")
 set_tmux_env PICKER_PATTERNS2 $(array_join "|" "${PATTERNS_LIST2[@]}")
 set_tmux_env PICKER_BLACKLIST_PATTERNS $(array_join "|" "${BLACKLIST[@]}")
 
-set_tmux_env PICKER_COPY_COMMAND "xargs -0 ton"
+set_tmux_env PICKER_COPY_COMMAND "xargs -I {} tmux-pane-tree nvim_exec -s ':OpenFile {}'"
 set_tmux_env PICKER_COPY_COMMAND_UPPERCASE "xclip -f -in -sel primary | xclip -in -sel clipboard"
 
 set_tmux_env PICKER_HINT_FORMAT $(process_format "#[fg=color0,bg=color202,dim,bold]%s")

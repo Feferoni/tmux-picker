@@ -1,4 +1,4 @@
-@include "join" # gawk 4.1 was released in 2013
+@include "/usr/share/awk/join.awk" # gawk 4.1 was released in 2013
 
 BEGIN {
     n_matches = 0;
@@ -13,7 +13,7 @@ BEGIN {
     highlight_format = ENVIRON["PICKER_HIGHLIGHT_FORMAT"]
     compound_format = hint_format highlight_format
 
-    # run gen_hints.py to (re-)generate it: 
+    # run gen_hints.py to (re-)generate it:
     if (num_hints_needed <= 17) {
         split("s a d f j k l e w c m v p g h r u", HINTS);
     } else if (num_hints_needed <= 30) {
@@ -54,9 +54,9 @@ BEGIN {
         if (line_match !~ blacklist) {
             # All sub-patterns start with a prefix group (sometimes empty) that should not be highlighted, e.g.
             #     ((prefix_a)(item_a))|((prefix_b)(item_a))
-            # So matches array is looks like: 
+            # So matches array is looks like:
             #    ||||prefix_b item_b|prefix_b|item_b|
-            #    or    
+            #    or
             #    |prefix_a item_a|prefix_a|item_a||||
             # Unfortunately, we don't know the index of first matching group.
             num_groups = length(matches) / 3; # array contains: idx, idx-start, idx-length for each group
@@ -81,8 +81,8 @@ BEGIN {
 
             # Fix colors broken by the hints highlighting.
             # This is mostly needed to keep prompts intact, so fix first ~500 chars only
-            if (length(output_line) < 500) { 
-                num_colors = split(pre_match, arr, /\x1b\[[0-9;]{1,9}m/, colors); 
+            if (length(output_line) < 500) {
+                num_colors = split(pre_match, arr, /\x1b\[[0-9;]{1,9}m/, colors);
                 post_match = join(colors, 1, 1 + num_colors, SUBSEP) post_match;
             }
 
